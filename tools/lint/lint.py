@@ -290,7 +290,7 @@ def check_owners(repo_root, paths):
         parts = source_file.dir_path.split(os.path.sep)
 
         if not parts:
-            continue # Skip top-level files
+            continue  # Skip top-level files
         level = 0
         for dir in owner_in_subdirs:
             if path.startswith(dir):
@@ -298,15 +298,15 @@ def check_owners(repo_root, paths):
         if len(parts) <= level:
             continue
         key = "/".join(parts[:level + 1])
-        if not key in dirs:
+        if key not in dirs:
             dirs[key] = False
         if path.endswith("/OWNERS") and len(parts) == level + 1:
             dirs[key] = True
 
     for dir in dirs:
         if dir == "":
-            continue # FIXME Should not happen?
-        if dirs[dir] == False:
+            continue  # FIXME Should not happen?
+        if dirs[dir] is False:
             errors.append(("MISSING-OWNERS", "Directory is missing OWNERS file.", dir, None))
 
     return errors
