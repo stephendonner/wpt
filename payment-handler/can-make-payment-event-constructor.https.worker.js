@@ -47,3 +47,5 @@ test(() => {
   });
   self.dispatchEvent(ev);
 }, 'CanMakePaymentEvent can be dispatched, even if not trusted');
+
+done();
