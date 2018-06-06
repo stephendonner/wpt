@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-scroll-snap-1" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+div {
+  position: absolute;
+}
+#scroller {
+  overflow: scroll;
+  scroll-snap-type: both mandatory;
+  width: 500px;
+  height: 500px;
+}
+#space {
+  width: 2500px;
+  height: 2000px;
+}
+.target {
+  scroll-snap-align: start none;
+}
+.large {
+  left: 200px;
+  top: 200px;
+  width: 2000px;
+  height: 400px;
+  background-color: yellow;
+}
+.small {
+  top: 200px;
+  width: 200px;
+  height: 200px;
+  background-color: black;
+}
+</style>
+
+<div id="scroller">
+  <div id="space"></div>
+  <div class="target large"></div>
+  <div class="target small" style="left: 400px"></div>
+  <div class="target small" style="left: 800px"></div>
+  <div class="target small" style="left: 1400px"></div>
+</div>
+
+<script>
+var scroller = document.getElementById("scroller");
+
+test(() => {
+  scroller.scrollTo(0, 0);
+  assert_equals(scroller.scrollLeft, 200);
+  assert_equals(scroller.scrollTop, 0);
+}, "Snaps to the snap position if the snap area doesn't cover the snapport.");
+
+test(() => {
+  scroller.scrollTo(500, 200);
+  assert_equals(scroller.scrollLeft, 400);
+  assert_equals(scroller.scrollTop, 200);
+}, "Does not stay if the distance betweent the previous(400) and next(800) " +
+   "snap positions is smaller than snapport(500).");
+
+test(() => {
+  scroller.scrollTo(900, 200);
+  assert_equals(scroller.scrollLeft, 900);
+  assert_equals(scroller.scrollTop, 200);
+}, "Valid as the snap area covers snapport on x and the distance between the " +
+   "previous(800) and next(1400) is larger than snapport(500).");
+
+test(() => {
+  scroller.scrollTo(1500, 200);
+  assert_equals(scroller.scrollLeft, 1500);
+  assert_equals(scroller.scrollTop, 200);
+}, "Valid as the snap area covers snapport on x and the distance between the " +
+   "previous(1400) and next(infinite) is larger than snapport(500).");
+
+</script>

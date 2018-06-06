@@ -13,36 +13,57 @@ body {
   scroll-snap-type: both mandatory;
 }
 #div-scroller {
+  position: absolute;
+  top: 3000px;
   width: 800px;
   height: 800px;
+}
+.space {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 2100px;
+  height: 2100px;
+  position: absolute;
 }
 .content {
   width: 2100px;
   height: 2100px;
 }
 .target {
-  width: 1000px;
-  height: 1000px;
+  position: absolute;
+  width: 600px;
+  height: 600px;
   scroll-snap-align: start;
   float: left;
+}
+.left {
+  left: 0px;
+}
+.right {
+  left: 1000px;
+}
+.top {
+  top: 0px;
+}
+.bottom {
+  top: 1000px;
 }
 </style>
 
 <body class="scroller">
-  <div class="content" id="content">
-    <div class="target"></div>
-    <div class="target"></div>
-    <div class="target"></div>
-    <div class="target"></div>
-  </div>
+  <div class="space"></div>
+  <div class="target left top"></div>
+  <div class="target right top"></div>
+  <div class="target left bottom"></div>
+  <div class="target right bottom"></div>
 
   <div class="scroller" id="div-scroller">
-    <div class="content">
-      <div class="target"></div>
-      <div class="target"></div>
-      <div class="target"></div>
-      <div class="target"></div>
-    </div>
+    <div class="space"></div>
+    <div class="target left top"></div>
+    <div class="target right top"></div>
+    <div class="target left bottom"></div>
+    <div class="target right bottom"></div>
   </div>
 </body>
 
@@ -141,5 +162,4 @@ var viewport = document.scrollingElement;
   }, `scrollBy(${format_dict(input)}) on window lands on (${expectedX}, ${expectedY})`);
 });
 
-document.body.removeChild(document.getElementById("content"));
 </script>
