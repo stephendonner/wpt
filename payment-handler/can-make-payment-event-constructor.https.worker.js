@@ -1,32 +1,8 @@
-// https://w3c.github.io/payment-handler/#the-canmakepaymentevent
-
-'use strict';
-
-if (self.importScripts) {
-  importScripts('/resources/testharness.js');
-}
+importScripts('/resources/testharness.js');
 
 test(() => {
-  try {
-    new CanMakePaymentEvent('test');
-  } catch (err) {
-    assert_unreached(`Unexpected exception: ${err.message}`);
-  }
-}, 'CanMakePaymentEvent can be constructed in service worker.');
-
-test(() => {
-  const ev = new CanMakePaymentEvent('test', {
-    bubbles: true,
-    cancelabel: true,
-    composed: true,
-  });
-  assert_false(ev.isTrusted, 'constructed in script, so not be trusted');
-  assert_true(ev.bubbles, 'set by EventInitDict');
-  assert_true(ev.cancelable, 'set by EventInitDict');
-  assert_true(ev.composed, 'set by EventInitDict');
-  assert_equals(ev.target, null, 'initially null');
-  assert_equals(ev.type, 'test');
-}, 'CanMakePaymentEvent can be constructed with an EventInitDict, even if not trusted');
+  assert_false('CanMakePaymentEvent' in self);
+}, 'CanMakePaymentEvent constructor must not be exposed in worker');
 
 test(() => {
   const ev = new CanMakePaymentEvent('test', {
