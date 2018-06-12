@@ -20,7 +20,7 @@
 
       // Sets up AudioWorklet and OfflineAudioContext.
       audit.define('Initializing AudioWorklet and Context', (task, should) => {
-        context = new OfflineAudioContext(1, renderLength, sampleRate);
+        context = new OfflineAudioContext(2, renderLength, sampleRate);
         context.audioWorklet.addModule(filePath).then(() => {
           task.done();
         });
@@ -30,28 +30,29 @@
       // comparing (canceling out) values from GainNode and AudioWorkletNode
       // with simple gain computation code by AudioParam.
       audit.define(
-          'Verifying AudioParam in AudioWorkletNode',
-          (task, should) => {
+          'Verifying AudioParam in AudioWorkletNode', (task, should) => {
             let constantSourceNode = new ConstantSourceNode(context);
             let gainNode = new GainNode(context);
-            let inverterNode = new GainNode(context, {gain: -1});
             let gainWorkletNode = new AudioWorkletNode(context, 'gain');
             let gainWorkletParam = gainWorkletNode.parameters.get('gain');
 
+            let mergerNode = new ChannelMergerNode(
+                context, {numberOfInputs: context.destination.channelCount});
+            mergerNode.connect(context.destination);
+
             // Test default value and setter/getter functionality.
-            should(gainWorkletParam.value,
-                   'Default gain value of gainWorkletNode')
+            should(
+                gainWorkletParam.value, 'Default gain value of gainWorkletNode')
                 .beEqualTo(Math.fround(0.707));
             gainWorkletParam.value = 0.1;
-            should(gainWorkletParam.value,
-                   'Value of gainWorkletParam after setter = 0.1')
+            should(
+                gainWorkletParam.value,
+                'Value of gainWorkletParam after setter = 0.1')
                 .beEqualTo(Math.fround(0.1));
 
-            constantSourceNode.connect(gainNode)
-                .connect(inverterNode)
-                .connect(context.destination);
+            constantSourceNode.connect(gainNode).connect(mergerNode, 0, 0);
             constantSourceNode.connect(gainWorkletNode)
-                .connect(context.destination);
+                .connect(mergerNode, 0, 1);
 
             // With arbitrary times and values, test all possible AudioParam
             // automations.
@@ -72,9 +73,9 @@
 
             constantSourceNode.start();
             context.startRendering().then((renderedBuffer) => {
-              should(renderedBuffer.getChannelData(0),
-                     'The rendered buffer')
-                  .beConstantValueOf(0);
+              let expected = renderedBuffer.getChannelData(0);
+              let actual = renderedBuffer.getChannelData(1);
+              should(actual, 'gainWorkletNode output').beEqualToArray(expected);
               task.done();
             });
           });
