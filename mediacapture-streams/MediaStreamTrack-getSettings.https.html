@@ -75,4 +75,30 @@
       }
     });
   }, 'groupId is correctly reported by getSettings() for all devices');
+
+  promise_test(t => {
+    return navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
+      let settings = stream.getAudioTracks()[0].getSettings();
+      assert_true(undefined !== settings.deviceId,
+                  "deviceId should exist for an audio track.");
+      assert_true(undefined !== settings.groupId,
+                  "groupId should exist for an audio track.");
+      assert_true(undefined !== settings.volume,
+                  "volume should exist for an audio track.");
+      assert_true(undefined !== settings.sampleRate,
+                  "sampleRate should exist for an audio track.");
+      assert_true(undefined !== settings.sampleSize,
+                  "sampleSize should exist for an audio track.");
+      assert_true(undefined !== settings.echoCancellation,
+                  "echoCancellation should exist for an audio track.");
+      assert_true(undefined !== settings.autoGainControl,
+                  "autoGainControl should exist for an audio track.");
+      assert_true(undefined !== settings.noiseSuppression,
+                  "noiseSuppression should exist for an audio track.");
+      assert_true(undefined !== settings.latency,
+                  "latency should exist for an audio track.");
+      assert_true(undefined !== settings.channelCount,
+                  "channelCount should exist for an audio track.");
+    });
+  }, 'audio properties are reported by getSettings()');
 </script>
