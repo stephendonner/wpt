@@ -36,11 +36,11 @@ promise_test(t => {
             scope_for_iframe);
         })
       .then(r => {
-          frame.remove();
           assert_equals(r.installing, null);
           assert_equals(r.waiting, null);
           assert_equals(r.active.state, 'activated');
           assert_equals(r.scope, normalizeURL(scope_for_main));
+          frame.remove();
           r.onupdatefound = () => { /* empty */ };
 
           // We want to verify that unregister() and update() do not
